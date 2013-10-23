@@ -1,0 +1,34 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.52</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\Release</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.39.1005\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.39.1005\avrassembler\Include\m328Pdef.inc</FILE>
+  <FILE>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.39.1005\avrassembler\Include\m328pdef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\Release/LED_Cube.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>LED_Cube.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>LED_Cube.map</FILE>
+  <FILE>LED_Cube.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <RESET><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>19</LINE></RESET>
+  <PCI1_INT><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>54</LINE></PCI1_INT>
+  <SET_INTERRUPT><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>27</LINE></SET_INTERRUPT>
+  <SET_IO_PINS><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>37</LINE></SET_IO_PINS>
+  <LOOP><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>50</LINE></LOOP>
+  <SET_HIGH><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>71</LINE></SET_HIGH>
+  <SET_LOW><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>68</LINE></SET_LOW>
+  <END_PCI1_INT><FILE>D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm</FILE><LINE>74</LINE></END_PCI1_INT>
+ </LABELS>
+</ASSEMBLER_INFO>

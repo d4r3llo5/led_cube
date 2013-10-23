@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.52  D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm Wed Oct 23 18:09:26 2013
+AVRASM ver. 2.1.52  D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm Sun Oct 20 20:39:56 2013
 
 [builtin](2): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.39.1005\avrassembler\Include\m328Pdef.inc'
 D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm(9): Including file 'C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.39.1005\avrassembler\Include\m328pdef.inc'
@@ -1040,7 +1040,7 @@ D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm(9): Includin
                  
                  									; Interrupt handler for PCI1
                  .org PCI1addr
-000008 c01b      	RJMP PCI1_INT;					Go to this label for interrupt handler
+000008 c015      	RJMP PCI1_INT;					Go to this label for interrupt handler
                  
                  									; What is run on start up
                  RESET:
@@ -1057,72 +1057,50 @@ D:\School\WCE\Concept_Three\AVR\Code\LED_Cube\LED_Cube\LED_Cube.asm(9): Includin
 000010 9300 0068 	STS PCICR, r16;
                  
 000012 2700      	CLR r16;
-000013 e30e      	LDI r16, ( 1 << PCINT13 ) | ( 1 << PCINT12 ) | ( 1 << PCINT11 ) | ( 1 << PCINT10 ) | ( 1 << PCINT9 );		Enable the interrupt for pin 28 (PCINT13)
+000013 e200      	LDI r16, ( 1 << PCINT13 );		Enable the interrupt for pin 28 (PCINT13)
 000014 9300 006c 	STS PCMSK1, r16;
                  	
-                 									; Set the I/O Pins for PCINT[14:8] and PCINT[23:16]
+                 									; Set the I/O Pins for PCINT[14:8]
                  SET_IO_PINS:
 000016 2700      	CLR r16;
-000017 e001      	LDI r16, 0x01;					Set PinC[0] as output, PinC[5:1] as input
-000018 b907      	OUT DDRC, r16;
+000017 e10f      	LDI r16, 0x1F;					Set PinC[4:0] as output, PinC5 as input
+000018 b907      	OUT DDRC, r16;					
                  
 000019 2700      	CLR r16;
-00001a ef0f      	LDI r16, 0xFF;					Set PinD[7:0] as output
-00001b b90a      	OUT DDRD, r16;
+                 	;LDI r16, ( 1 << PORTC5 );		Enable the internal pull-up resistor for PinC5
+00001a e30f      	LDI r16, 0x3F;
+00001b b908      	OUT PORTC, r16;
                  
-00001c 2700      	CLR r16;
-00001d e30e      	LDI r16, 0x3E;		Enable the internal pull-up resistor for PinC5
-00001e b908      	OUT PORTC, r16;
-                 
-                 									; Turn off all outputs by default
-00001f 2700      	CLR r16;
-000020 e000      	LDI r16, 0x00;
-000021 b90b      	OUT PORTD, r16;
-                 
-000022 9478      	SEI;							Enable Interrupts
+00001c 9478      	SEI;							Enable Interrupts
                  
                  									; Do nothing forever
                  LOOP:
-000023 cfff      	RJMP LOOP;
+00001d cfff      	RJMP LOOP;
                  
                  									; Turn on the lights
                  PCI1_INT:
-000024 94f8      	CLI;							Disable interrupts
+00001e 94f8      	CLI;							Disable interrupts
                  
-000025 2700      	CLR r16;
-000026 2711      	CLR r17;
-000027 2722      	CLR r18;
+00001f 2700      	CLR r16;
+000020 2711      	CLR r17;						Mask for reading PinC5
                  
-000028 b106      	IN r16, PINC;					Read in the PinC Register
+000021 e210      	LDI r17, 0x20;					Set it to only be the 6th pin in PCINT[14:8]
+000022 b106      	IN r16, PINC;					Read in the PinC Register
                  
-000029 730e      	ANDI r16, 0x3E;					MASK off what we don't care about
+000023 7200      	ANDI r16, 0x20;			MASK off what we don't care about
                  
-                 SET_LEDS:
-00002a 2b10      	OR r17, r16;
-00002b 9516      	LSR r17;						; Shift to send to the PortD [4:0]
-00002c 9516      	LSR r17;						; Shift to send to the PortD [4:0]
-00002d b91b      	OUT PORTD, r17;
+000024 3200      	CPI r16, 0x20;					If PinC5 is high
+000025 f009      	BREQ SET_HIGH;					Turn on all of the lights
                  
-                 									; Check to see if we should enable on the ground
-00002e 2711      	CLR r17;
-00002f 2b10      	OR r17, r16;					; Use r17 as the input of PinC[5:1]
-000030 7012      	ANDI r17, 0x02;					; Only read PinC[1]
-000031 3012      	CPI r17, 0x02;					If PinC[1] is high
-000032 f021      	BREQ SET_GROUND_HIGH;			Do not enable ground
+                 SET_LOW:
+000026 c001      	RJMP END_PCI1_INT;				Go to the end
                  
-                 SET_GROUND_LOW:
-000033 2711      	CLR r17;
-000034 631e      	ORI r17, 0x3E;					Turn on ground
-000035 b918      	OUT PORTC, r17;
-000036 c003      	RJMP END_PCI1_INT;
-                 
-                 SET_GROUND_HIGH:
-000037 2711      	CLR r17;
-000038 631f      	ORI r17, 0x3F;					Enable the ground connection
-000039 b918      	OUT PORTC, r17;
-                 
+                 SET_HIGH:
+000027 611f      	ORI r17, 0x1F;					Turn on all of the lights
+                 	
                  END_PCI1_INT:
-00003a 9478      	SEI;							Enable interrupts again
+000028 b918      	OUT PORTC, r17;
+000029 9478      	SEI;							Enable interrupts again
 
 
 RESOURCE USE INFORMATION
@@ -1142,37 +1120,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 r5 :   0 r6 :   0 r7 :   0 
 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 r13:   0 r14:   0 r15:   0 
-r16:  27 r17:  15 r18:   1 r19:   0 r20:   0 r21:   0 r22:   0 r23:   0 
+r16:  20 r17:   4 r18:   0 r19:   0 r20:   0 r21:   0 r22:   0 r23:   0 
 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 r29:   0 r30:   0 r31:   0 
 x  :   0 y  :   0 z  :   0 
-Registers used: 3 out of 35 (8.6%)
+Registers used: 2 out of 35 (5.7%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
-andi  :   2 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+andi  :   1 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   1 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   0 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   2 cln   :   0 clr   :  12 cls   :   0 
+clc   :   0 clh   :   0 cli   :   2 cln   :   0 clr   :   6 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   1 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   8 lds   :   0 lpm   :   0 lsl   :   0 
-lsr   :   2 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   2 ori   :   2 out   :   9 pop   :   0 
+ld    :   0 ldd   :   0 ldi   :   7 lds   :   0 lpm   :   0 lsl   :   0 
+lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   1 out   :   5 pop   :   0 
 push  :   0 rcall :   0 ret   :   0 reti  :   1 rjmp  :   4 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   2 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 15 out of 113 (13.3%)
+Instructions used: 13 out of 113 (11.5%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000078    106      0    106   32768   0.3%
+[.cseg] 0x000000 0x000056     72      0     72   32768   0.2%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
